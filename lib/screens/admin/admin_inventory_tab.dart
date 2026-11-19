@@ -3,7 +3,7 @@
 // Requirement: FR-06 Admin Product Management / Inventory (FR-09) (UI-06) | GitHub Issue #6
 // Description: Content of the "Inventory (FR-09)" tab: search, Add Product button and the product list.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/product.dart';
@@ -59,7 +59,9 @@ class AdminInventoryTab extends StatelessWidget {
     }
     if (provider.allProducts.isEmpty) {
       return _centerMessage(
-          context, 'No products yet. Tap + Add Product to add your first bead design.');
+        context,
+        'No products yet. Tap + Add Product to add your first bead design.',
+      );
     }
     final products = provider.products;
     if (products.isEmpty) {
@@ -89,7 +91,8 @@ class AdminInventoryTab extends StatelessWidget {
         child: Text(
           message,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: InventoryColors.textMuted),
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: InventoryColors.textMuted),
         ),
       ),
     );
@@ -101,7 +104,9 @@ class AdminInventoryTab extends StatelessWidget {
     final ok = await context.read<AdminProductProvider>().toggleStock(product);
     if (!ok) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Could not change stock. Please try again.')),
+        const SnackBar(
+          content: Text('Could not change stock. Please try again.'),
+        ),
       );
     }
   }
@@ -125,7 +130,9 @@ class AdminInventoryTab extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: TextButton.styleFrom(foregroundColor: InventoryColors.errorRed),
+            style: TextButton.styleFrom(
+              foregroundColor: InventoryColors.errorRed,
+            ),
             child: const Text('Archive'),
           ),
         ],
@@ -136,8 +143,14 @@ class AdminInventoryTab extends StatelessWidget {
     }
 
     final ok = await provider.archiveProduct(product.productId);
-    messenger.showSnackBar(SnackBar(
-      content: Text(ok ? 'Product archived' : 'Could not archive product. Please try again.'),
-    ));
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          ok
+              ? 'Product archived'
+              : 'Could not archive product. Please try again.',
+        ),
+      ),
+    );
   }
 }

@@ -40,9 +40,21 @@ class MockAiRecommenderService implements AiRecommenderService {
 
   /// Bead ideas for each colour aesthetic.
   static const Map<String, List<String>> _palettes = {
-    'Cream & Sage': ['Cream freshwater pearl', 'Sage glass bead', 'Gold-tone spacer'],
-    'Soft Lavender': ['Lavender glass bead', 'Pearl white seed bead', 'Silver-tone spacer'],
-    'Pastel Mix': ['Pink acrylic bead', 'Mint seed bead', 'Pale yellow crystal'],
+    'Cream & Sage': [
+      'Cream freshwater pearl',
+      'Sage glass bead',
+      'Gold-tone spacer',
+    ],
+    'Soft Lavender': [
+      'Lavender glass bead',
+      'Pearl white seed bead',
+      'Silver-tone spacer',
+    ],
+    'Pastel Mix': [
+      'Pink acrylic bead',
+      'Mint seed bead',
+      'Pale yellow crystal',
+    ],
     'Classic Neutral': ['Ivory pearl', 'Smoky quartz bead', 'Gold-tone charm'],
   };
 
@@ -55,16 +67,22 @@ class MockAiRecommenderService implements AiRecommenderService {
 
     // Join the bead ideas of all chosen colours (a Set removes duplicates).
     final palette = <String>{
-      for (final colour in prefs.selectedColours) ...(_palettes[colour] ?? const <String>[]),
+      for (final colour in prefs.selectedColours)
+        ...(_palettes[colour] ?? const <String>[]),
     }.toList();
 
-    final typeWord = prefs.accessoryType == 'Any' ? 'Design' : _singular(prefs.accessoryType);
-    final who = prefs.stylingFor == 'Myself' ? 'yourself' : 'your ${prefs.stylingFor.toLowerCase()}';
+    final typeWord = prefs.accessoryType == 'Any'
+        ? 'Design'
+        : _singular(prefs.accessoryType);
+    final who = prefs.stylingFor == 'Myself'
+        ? 'yourself'
+        : 'your ${prefs.stylingFor.toLowerCase()}';
 
     return AiRecommendation(
       designTitle: '${prefs.selectedColours.join(' & ')} $typeWord Suite',
       beadPalette: palette,
-      stylingNote: 'A soft handmade look for $who. Mix ${palette.first.toLowerCase()} '
+      stylingNote:
+          'A soft handmade look for $who. Mix ${palette.first.toLowerCase()} '
           'with the other beads and keep the clasp simple.',
       // Keep the estimate inside the customer's budget.
       estimatedPriceMYR: min(prefs.maxBudgetMYR, 10 + palette.length * 4.0),
@@ -74,9 +92,14 @@ class MockAiRecommenderService implements AiRecommenderService {
 
   @override
   AiRecommendation fallback(AiPreferences prefs) {
-    final available = _store.products.where((p) => p.status == 'Available').toList();
+    final available = _store.products
+        .where((p) => p.status == 'Available')
+        .toList();
     final sameType = available
-        .where((p) => prefs.accessoryType == 'Any' || p.category == prefs.accessoryType)
+        .where(
+          (p) =>
+              prefs.accessoryType == 'Any' || p.category == prefs.accessoryType,
+        )
         .toList();
     // If nothing matches the type, show any available pieces instead.
     final picks = (sameType.isNotEmpty ? sameType : available).take(4).toList();
@@ -84,7 +107,8 @@ class MockAiRecommenderService implements AiRecommenderService {
     return AiRecommendation(
       designTitle: 'Handpicked for you',
       beadPalette: const [],
-      stylingNote: 'Our AI Stylist is taking a short breather — '
+      stylingNote:
+          'Our AI Stylist is taking a short breather — '
           'here are handpicked pieces matching your style!',
       estimatedPriceMYR: 0,
       matchedProducts: picks,
@@ -95,8 +119,11 @@ class MockAiRecommenderService implements AiRecommenderService {
   /// BR-05: only Available items that are inside the budget (and the chosen type).
   List<BeadProduct> _matchProducts(AiPreferences prefs) {
     return _store.products.where((p) {
-      final typeOk = prefs.accessoryType == 'Any' || p.category == prefs.accessoryType;
-      return p.status == 'Available' && p.priceMYR <= prefs.maxBudgetMYR && typeOk;
+      final typeOk =
+          prefs.accessoryType == 'Any' || p.category == prefs.accessoryType;
+      return p.status == 'Available' &&
+          p.priceMYR <= prefs.maxBudgetMYR &&
+          typeOk;
     }).toList();
   }
 

@@ -5,20 +5,28 @@
 
 import 'package:beadaries_prototype/screens/customer/ai_recommender_screen.dart';
 import 'package:beadaries_prototype/services/ai_recommender_service.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Opens the screen on a tall fake phone so nothing is hidden below the fold.
-Future<void> _openScreen(WidgetTester tester, MockAiRecommenderService service) async {
+Future<void> _openScreen(
+  WidgetTester tester,
+  MockAiRecommenderService service,
+) async {
   await tester.binding.setSurfaceSize(const Size(420, 1800));
   addTearDown(() => tester.binding.setSurfaceSize(null));
-  await tester.pumpWidget(MaterialApp(home: AiRecommenderScreen(service: service)));
+  await tester.pumpWidget(
+    MaterialApp(home: AiRecommenderScreen(service: service)),
+  );
 }
 
 void main() {
-  const disclaimer = 'AI-generated styling suggestion — final availability subject to confirmation';
+  const disclaimer =
+      'AI-generated styling suggestion — final availability subject to confirmation';
 
-  testWidgets('FR-AI-01: blocks generate when no colour is selected', (tester) async {
+  testWidgets('FR-AI-01: blocks generate when no colour is selected', (
+    tester,
+  ) async {
     await _openScreen(tester, MockAiRecommenderService(delay: Duration.zero));
 
     await tester.tap(find.text('Cream & Sage')); // deselect the default colour
@@ -26,11 +34,16 @@ void main() {
     await tester.tap(find.text('Generate Bespoke Design'));
     await tester.pump();
 
-    expect(find.text('Please pick at least one colour aesthetic.'), findsOneWidget);
+    expect(
+      find.text('Please pick at least one colour aesthetic.'),
+      findsOneWidget,
+    );
     expect(find.text(disclaimer), findsNothing);
   });
 
-  testWidgets('FR-AI-01: shows a result card with the AI disclaimer', (tester) async {
+  testWidgets('FR-AI-01: shows a result card with the AI disclaimer', (
+    tester,
+  ) async {
     await _openScreen(tester, MockAiRecommenderService(delay: Duration.zero));
 
     await tester.tap(find.text('Generate Bespoke Design'));
@@ -40,7 +53,9 @@ void main() {
     expect(find.text('Use in Reservation'), findsOneWidget);
   });
 
-  testWidgets('FR-AI-03: shows the fallback notice and Retry AI on outage', (tester) async {
+  testWidgets('FR-AI-03: shows the fallback notice and Retry AI on outage', (
+    tester,
+  ) async {
     await _openScreen(
       tester,
       MockAiRecommenderService(delay: Duration.zero, simulateOutage: true),
@@ -53,7 +68,9 @@ void main() {
     expect(find.text('Retry AI'), findsOneWidget);
   });
 
-  testWidgets('FR-AI-04: thumbs up shows the thank-you message once', (tester) async {
+  testWidgets('FR-AI-04: thumbs up shows the thank-you message once', (
+    tester,
+  ) async {
     await _openScreen(tester, MockAiRecommenderService(delay: Duration.zero));
 
     await tester.tap(find.text('Generate Bespoke Design'));

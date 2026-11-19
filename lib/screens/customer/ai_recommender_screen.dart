@@ -5,7 +5,7 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../models/ai_recommendation.dart';
 import '../../services/ai_recommender_service.dart';
@@ -34,7 +34,8 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
   /// NFR-AI-03: at most 10 requests per hour.
   static const int _maxRequestsPerHour = 10;
 
-  late final AiRecommenderService _service = widget.service ?? MockAiRecommenderService();
+  late final AiRecommenderService _service =
+      widget.service ?? MockAiRecommenderService();
 
   String _stylingFor = kStylingForOptions.first;
   final Set<String> _colours = {kColourOptions.first};
@@ -49,21 +50,25 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
 
   /// Builds the preferences object from the current form values.
   AiPreferences get _prefs => AiPreferences(
-        stylingFor: _stylingFor,
-        selectedColours: Set<String>.of(_colours),
-        accessoryType: _accessory,
-        maxBudgetMYR: _budget,
-      );
+    stylingFor: _stylingFor,
+    selectedColours: Set<String>.of(_colours),
+    accessoryType: _accessory,
+    maxBudgetMYR: _budget,
+  );
 
   /// FR-AI-01: validate, call the AI, and fall back if it fails (FR-AI-03).
   Future<void> _generate() async {
     final prefs = _prefs;
     if (!prefs.isValid) {
-      setState(() => _validationError = 'Please pick at least one colour aesthetic.');
+      setState(
+        () => _validationError = 'Please pick at least one colour aesthetic.',
+      );
       return;
     }
     if (_isRateLimited()) {
-      _showSnack('You have reached 10 designs this hour. Please try again later.');
+      _showSnack(
+        'You have reached 10 designs this hour. Please try again later.',
+      );
       return;
     }
 
@@ -114,7 +119,8 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
   }
 
   void _showSnack(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -133,7 +139,11 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
         children: [
           const Text(
             'AI STYLIST • PDPA SAFE',
-            style: TextStyle(fontSize: 11, letterSpacing: 1, color: AppColors.muted),
+            style: TextStyle(
+              fontSize: 11,
+              letterSpacing: 1,
+              color: AppColors.muted,
+            ),
           ),
           const SizedBox(height: 12),
           _buildFormCard(),
@@ -194,7 +204,10 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
               Expanded(child: _label('Max Budget (MYR)')),
               Text(
                 'RM ${_budget.round()}.00',
-                style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.purple),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.purple,
+                ),
               ),
             ],
           ),
@@ -214,14 +227,19 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
             child: FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.purple,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
               onPressed: _loading ? null : _generate,
               child: _loading
                   ? const SizedBox(
                       width: 22,
                       height: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : const Text('Generate Bespoke Design'),
             ),
@@ -233,9 +251,12 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
 
   /// Small heading above each group of chips.
   Widget _label(String text) => Padding(
-        padding: const EdgeInsets.only(bottom: 6),
-        child: Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-      );
+    padding: const EdgeInsets.only(bottom: 6),
+    child: Text(
+      text,
+      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+    ),
+  );
 
   /// A wrap of rounded chips. Selected chips are purple.
   Widget _chips({
@@ -278,7 +299,11 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
         children: [
           Text(
             result.designTitle,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.sage),
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColors.sage,
+            ),
           ),
           const SizedBox(height: 8),
           Text(result.stylingNote, style: const TextStyle(fontSize: 13)),
@@ -304,7 +329,9 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
           ],
           const Divider(height: 28),
           Text(
-            result.isFallback ? 'Handpicked pieces in stock' : 'Matching pieces in stock',
+            result.isFallback
+                ? 'Handpicked pieces in stock'
+                : 'Matching pieces in stock',
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
@@ -318,7 +345,11 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
           const SizedBox(height: 12),
           const Text(
             'AI-generated styling suggestion — final availability subject to confirmation',
-            style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: AppColors.muted),
+            style: TextStyle(
+              fontSize: 11,
+              fontStyle: FontStyle.italic,
+              color: AppColors.muted,
+            ),
           ),
           const SizedBox(height: 12),
           _buildActions(result),
@@ -336,7 +367,10 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
           const Icon(Icons.circle, size: 8, color: AppColors.sage),
           const SizedBox(width: 8),
           Expanded(
-            child: Text('${product.name} (${product.category})', style: const TextStyle(fontSize: 13)),
+            child: Text(
+              '${product.name} (${product.category})',
+              style: const TextStyle(fontSize: 13),
+            ),
           ),
           Text(
             'RM ${product.priceMYR.toStringAsFixed(2)}',
@@ -356,7 +390,10 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
         Row(
           children: [
             if (result.isFallback)
-              OutlinedButton(onPressed: _loading ? null : _generate, child: const Text('Retry AI'))
+              OutlinedButton(
+                onPressed: _loading ? null : _generate,
+                child: const Text('Retry AI'),
+              )
             else if (_feedback == 0) ...[
               IconButton(
                 tooltip: 'Good suggestion',
@@ -384,7 +421,9 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
           child: FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.sage,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
             onPressed: () => _useInReservation(result),
             child: const Text('Use in Reservation'),

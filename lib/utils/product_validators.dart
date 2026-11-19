@@ -58,7 +58,9 @@ class ProductValidators {
   /// True if the file name ends with .jpg, .jpeg or .png (any letter case).
   static bool isValidImageExtension(String fileName) {
     final lower = fileName.toLowerCase();
-    return lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png');
+    return lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png');
   }
 
   /// True if the size is under 5 MB.

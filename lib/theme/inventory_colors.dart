@@ -4,7 +4,7 @@
 // Description: Colour constants used only by the Admin Inventory tab (kept separate so the team's AppColors is not changed).
 // TODO: merge these into the team theme when the team agrees on one palette.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Colours for the Admin Inventory tab. Never hardcode colours in widgets.
 class InventoryColors {

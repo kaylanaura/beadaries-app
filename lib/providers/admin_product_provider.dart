@@ -17,8 +17,11 @@ const bool useMockData = true;
 class AdminProductProvider extends ChangeNotifier {
   /// Pass a repository for testing; otherwise the useMockData flag decides.
   AdminProductProvider({ProductRepository? repository})
-      : _repository = repository ??
-            (useMockData ? MockProductRepository() : FirestoreProductRepository()) {
+    : _repository =
+          repository ??
+          (useMockData
+              ? MockProductRepository()
+              : FirestoreProductRepository()) {
     _listenToProducts();
   }
 
@@ -40,7 +43,9 @@ class AdminProductProvider extends ChangeNotifier {
     if (query.isEmpty) {
       return _products;
     }
-    return _products.where((p) => p.name.toLowerCase().contains(query)).toList();
+    return _products
+        .where((p) => p.name.toLowerCase().contains(query))
+        .toList();
   }
 
   bool get isLoading => _isLoading;
