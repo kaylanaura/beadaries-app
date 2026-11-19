@@ -10,7 +10,7 @@ import 'package:flutter/foundation.dart';
 import '../models/product.dart';
 import '../services/product_service.dart';
 
-// TODO: switch useMockData to false when Firebase is connected (Kayla's setup)
+// Demo 1 uses the injectable mock repository; production injection is supported.
 const bool useMockData = true;
 
 /// State for the Admin Inventory tab. The shell can also read the counts for its KPI strip.

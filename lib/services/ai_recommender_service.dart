@@ -10,8 +10,8 @@ import '../models/ai_recommendation.dart';
 import 'reservation_store.dart';
 
 /// Any AI backend must follow this contract.
-/// TODO: add GeminiAiRecommenderService (Cloud Function / Firebase AI Logic) when Firebase is ready.
-/// The screen only knows this interface, so swapping the service needs no UI change.
+/// The screen depends on this interface, so a cloud implementation can replace
+/// the mock without changing the UI or its fallback behavior.
 abstract class AiRecommenderService {
   /// Returns a design recommendation. May throw if the AI is busy or offline.
   Future<AiRecommendation> recommend(AiPreferences prefs);

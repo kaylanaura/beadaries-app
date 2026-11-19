@@ -5,6 +5,7 @@
 
 import 'package:beadaries_prototype/screens/customer/ai_recommender_screen.dart';
 import 'package:beadaries_prototype/services/ai_recommender_service.dart';
+import 'package:beadaries_prototype/models/ai_recommendation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -80,5 +81,31 @@ void main() {
 
     expect(find.text('Thank you for your feedback!'), findsOneWidget);
     expect(find.byIcon(Icons.thumb_up_alt_outlined), findsNothing);
+  });
+
+  testWidgets('FR-AI-04: Use in Reservation passes the design to the shell', (
+    tester,
+  ) async {
+    AiRecommendation? handedOff;
+    await tester.binding.setSurfaceSize(const Size(420, 1800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: AiRecommenderScreen(
+          service: MockAiRecommenderService(delay: Duration.zero),
+          onUseInReservation: (recommendation) {
+            handedOff = recommendation;
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Generate Bespoke Design'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Use in Reservation'));
+    await tester.pump();
+
+    expect(handedOff, isNotNull);
+    expect(handedOff!.designSummary, isNotEmpty);
   });
 }

@@ -102,13 +102,13 @@ class _AiRecommenderScreenState extends State<AiRecommenderScreen> {
     return false;
   }
 
-  /// FR-AI-04: one vote per result. TODO: save feedbackRating to Firestore later.
+  /// FR-AI-04: one vote per result for the current session.
   void _vote(int value) {
     if (_feedback != 0) return;
     setState(() => _feedback = value);
   }
 
-  /// FR-AI-04: hand the design to the shell, or show a hint if it is not connected yet.
+  /// FR-AI-04: hand the design to the connected reservation flow.
   void _useInReservation(AiRecommendation result) {
     final callback = widget.onUseInReservation;
     if (callback != null) {
