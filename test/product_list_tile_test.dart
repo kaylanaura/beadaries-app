@@ -5,7 +5,7 @@
 
 import 'package:beadaries_prototype/models/product.dart';
 import 'package:beadaries_prototype/widgets/admin/product_list_tile.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -28,23 +28,33 @@ void main() {
 
   /// Shows the tile and returns its Switch widget.
   Future<Switch> pumpTile(WidgetTester tester, String status) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: ProductListTile(
-          product: sample(status),
-          onToggle: (_) {},
-          onEdit: () {},
-          onArchive: () {},
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ProductListTile(
+            product: sample(status),
+            onToggle: (_) {},
+            onEdit: () {},
+            onArchive: () {},
+          ),
         ),
       ),
-    ));
+    );
     return tester.widget<Switch>(find.byType(Switch));
   }
 
-  testWidgets('Switch is disabled for Pending and Reserved, enabled for Available',
-      (tester) async {
-    expect((await pumpTile(tester, ProductStatus.pending)).onChanged, isNull);
-    expect((await pumpTile(tester, ProductStatus.reserved)).onChanged, isNull);
-    expect((await pumpTile(tester, ProductStatus.available)).onChanged, isNotNull);
-  });
+  testWidgets(
+    'Switch is disabled for Pending and Reserved, enabled for Available',
+    (tester) async {
+      expect((await pumpTile(tester, ProductStatus.pending)).onChanged, isNull);
+      expect(
+        (await pumpTile(tester, ProductStatus.reserved)).onChanged,
+        isNull,
+      );
+      expect(
+        (await pumpTile(tester, ProductStatus.available)).onChanged,
+        isNotNull,
+      );
+    },
+  );
 }

@@ -6,7 +6,12 @@
 import '../services/reservation_store.dart';
 
 /// Who the accessory is for (shown as chips on the screen).
-const List<String> kStylingForOptions = ['Myself', 'Girlfriend', 'Mom', 'Daughter'];
+const List<String> kStylingForOptions = [
+  'Myself',
+  'Girlfriend',
+  'Mom',
+  'Daughter',
+];
 
 /// Colour aesthetics the customer can pick (more than one is allowed).
 const List<String> kColourOptions = [
@@ -17,7 +22,12 @@ const List<String> kColourOptions = [
 ];
 
 /// Accessory types. These names match BeadProduct.category in reservation_store.dart.
-const List<String> kAccessoryOptions = ['Any', 'Bracelets', 'Phone Charms', 'Keychains'];
+const List<String> kAccessoryOptions = [
+  'Any',
+  'Bracelets',
+  'Phone Charms',
+  'Keychains',
+];
 
 /// What the customer chose on the form.
 /// Note: it holds NO personal data (no name, phone or email) so it is PDPA safe (BR-06).

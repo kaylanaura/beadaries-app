@@ -19,28 +19,33 @@ void main() {
   /// Current list (the stream sends the latest list first).
   Future<List<Product>> currentList() => repo.watchProducts().first;
 
-  test('seed data has 8 products: 6 Available, 1 Pending, 1 Reserved', () async {
-    final list = await currentList();
-    expect(list.length, 8);
-    expect(list.where((p) => p.status == ProductStatus.available).length, 6);
-    expect(list.where((p) => p.status == ProductStatus.pending).length, 1);
-    expect(list.where((p) => p.status == ProductStatus.reserved).length, 1);
-  });
+  test(
+    'seed data has 8 products: 6 Available, 1 Pending, 1 Reserved',
+    () async {
+      final list = await currentList();
+      expect(list.length, 8);
+      expect(list.where((p) => p.status == ProductStatus.available).length, 6);
+      expect(list.where((p) => p.status == ProductStatus.pending).length, 1);
+      expect(list.where((p) => p.status == ProductStatus.reserved).length, 1);
+    },
+  );
 
   test('add creates a product at the top of the list', () async {
     final now = DateTime.now();
-    await repo.addProduct(Product(
-      productId: '',
-      name: 'New Bracelet',
-      category: 'Bracelet',
-      beadMaterial: 'Glass',
-      colorPalette: 'Sage',
-      description: '',
-      priceMYR: 20,
-      status: ProductStatus.available,
-      createdAt: now,
-      updatedAt: now,
-    ));
+    await repo.addProduct(
+      Product(
+        productId: '',
+        name: 'New Bracelet',
+        category: 'Bracelet',
+        beadMaterial: 'Glass',
+        colorPalette: 'Sage',
+        description: '',
+        priceMYR: 20,
+        status: ProductStatus.available,
+        createdAt: now,
+        updatedAt: now,
+      ),
+    );
     final list = await currentList();
     expect(list.length, 9);
     expect(list.first.name, 'New Bracelet');
@@ -49,15 +54,21 @@ void main() {
   test('edit price RM 25.00 to RM 22.00', () async {
     final item = (await currentList()).firstWhere((p) => p.priceMYR == 25.00);
     await repo.updateProduct(item.copyWith(priceMYR: 22.00));
-    final updated = (await currentList()).firstWhere((p) => p.productId == item.productId);
+    final updated = (await currentList()).firstWhere(
+      (p) => p.productId == item.productId,
+    );
     expect(updated.priceMYR, 22.00);
     expect(updated.priceLabel, 'RM 22.00');
   });
 
   test('toggle status Available to Sold Out', () async {
-    final item = (await currentList()).firstWhere((p) => p.status == ProductStatus.available);
+    final item = (await currentList()).firstWhere(
+      (p) => p.status == ProductStatus.available,
+    );
     await repo.updateStatus(item.productId, ProductStatus.soldOut);
-    final updated = (await currentList()).firstWhere((p) => p.productId == item.productId);
+    final updated = (await currentList()).firstWhere(
+      (p) => p.productId == item.productId,
+    );
     expect(updated.status, ProductStatus.soldOut);
   });
 

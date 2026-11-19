@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
@@ -36,8 +36,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.cream,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
         hintStyle: GoogleFonts.poppins(color: AppColors.muted, fontSize: 14),
         errorStyle: GoogleFonts.poppins(color: AppColors.error, fontSize: 12),
         border: _border(AppColors.creamDeep),

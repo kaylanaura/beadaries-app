@@ -1,18 +1,20 @@
-// cream background, sage green primary, hint of purple accent, poppins font
+// Backward-compatible reservation theme facade.
+// Keep reservation screens aligned with the application's shared AppTheme.
 
 import 'package:material_ui/material_ui.dart';
 
+import 'app_theme.dart';
+
 class BeadariesTheme {
-  // Brand Palette: Cream, Sage Green & Hint of Purple
-  static const Color creamBackground = Color(0xFFFAF7F0);
+  static const Color creamBackground = AppColors.cream;
   static const Color creamCard = Color(0xFFFFFFFF);
-  static const Color sageGreen = Color(0xFF6B8E78);
-  static const Color sageLight = Color(0xFFE6EFE9);
-  static const Color sageDark = Color(0xFF4A6B56);
-  static const Color purpleHint = Color(0xFF7E6899);
-  static const Color purpleLight = Color(0xFFF2ECF8);
-  static const Color textDark = Color(0xFF2B2D2C);
-  static const Color textMuted = Color(0xFF6E7571);
+  static const Color sageGreen = AppColors.sage;
+  static const Color sageLight = AppColors.sageLight;
+  static const Color sageDark = Color(0xFF2F5233);
+  static const Color purpleHint = AppColors.purple;
+  static const Color purpleLight = AppColors.purpleLight;
+  static const Color textDark = AppColors.ink;
+  static const Color textMuted = AppColors.muted;
 
   static ThemeData get themeData {
     final base = ThemeData(
@@ -50,10 +52,7 @@ class BeadariesTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
+          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

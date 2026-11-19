@@ -25,7 +25,12 @@ class ProductStatus {
 /// Category choices for the dropdown.
 class ProductCategory {
   static const String other = 'Other';
-  static const List<String> all = ['Bracelet', 'Phone Charm', 'Keychain', other];
+  static const List<String> all = [
+    'Bracelet',
+    'Phone Charm',
+    'Keychain',
+    other,
+  ];
 }
 
 /// One Beadaries product. Field names match Firestore exactly (teammates read the same collection).
@@ -60,8 +65,10 @@ class Product {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  static final NumberFormat _priceFormat =
-      NumberFormat.currency(symbol: 'RM ', decimalDigits: 2);
+  static final NumberFormat _priceFormat = NumberFormat.currency(
+    symbol: 'RM ',
+    decimalDigits: 2,
+  );
 
   /// Price shown in the UI, for example "RM 25.00".
   String get priceLabel => _priceFormat.format(priceMYR);

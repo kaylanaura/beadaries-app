@@ -1,4 +1,5 @@
 // Covers UI-04 Customer Reservation Form FR-04 + FR-05 Atomic Lock + UI-05 Track Status FR-06
+// Zeti Nur Aimar Binti Alli
 
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
@@ -8,8 +9,13 @@ import '../theme/beadaries_theme.dart';
 
 class CustomerReservationScreen extends StatefulWidget {
   final BeadProduct? preselectedProduct;
+  final String? initialCustomNotes;
 
-  const CustomerReservationScreen({super.key, this.preselectedProduct});
+  const CustomerReservationScreen({
+    super.key,
+    this.preselectedProduct,
+    this.initialCustomNotes,
+  });
 
   @override
   State<CustomerReservationScreen> createState() =>
@@ -38,6 +44,9 @@ class _CustomerReservationScreenState extends State<CustomerReservationScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    if (widget.initialCustomNotes != null) {
+      _notesController.text = widget.initialCustomNotes!;
+    }
     _selectedProduct =
         widget.preselectedProduct ??
         _store.products.firstWhere(
