@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../theme/app_theme.dart';
 import '../auth/auth_screen.dart';
+import 'catalogue_screen.dart';
 
 class CustomerHomeScreen extends StatelessWidget {
   const CustomerHomeScreen({super.key});
@@ -9,9 +11,8 @@ class CustomerHomeScreen extends StatelessWidget {
   Future<void> _logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
     if (!context.mounted) return;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const AuthScreen()),
-    );
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (_) => const AuthScreen()));
   }
 
   @override
@@ -51,6 +52,28 @@ class CustomerHomeScreen extends StatelessWidget {
             const Text(
               'Explore custom bead accessories & handmade pieces.',
               style: TextStyle(fontSize: 14, color: AppColors.muted),
+            ),
+            const SizedBox(height: 28),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const CatalogueScreen()),
+                  );
+                },
+                icon: const Icon(Icons.shopping_bag_outlined),
+                label: const Text('Explore Catalogue'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.sage,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
