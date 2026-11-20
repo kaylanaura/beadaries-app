@@ -41,12 +41,16 @@ void main() {
 
   group('image', () {
     test('wrong extension is blocked with the exact message', () {
-      expect(ProductValidators.imageFile('photo.gif', 1000),
-          'Please upload a JPG/PNG image under 5 MB');
+      expect(
+        ProductValidators.imageFile('photo.gif', 1000),
+        'Please upload a JPG/PNG image under 5 MB',
+      );
     });
     test('file over 5 MB (6 MB) is blocked', () {
-      expect(ProductValidators.imageFile('photo.png', 6 * 1024 * 1024),
-          'Please upload a JPG/PNG image under 5 MB');
+      expect(
+        ProductValidators.imageFile('photo.png', 6 * 1024 * 1024),
+        'Please upload a JPG/PNG image under 5 MB',
+      );
     });
     test('valid JPG under 5 MB passes (capital letters ok)', () {
       expect(ProductValidators.imageFile('PHOTO.JPG', 1024 * 1024), isNull);

@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../theme/app_theme.dart';
 import '../customer/customer_home_screen.dart';
 import '../admin/admin_home_screen.dart';
-
 
 enum UserRole { customer, admin }
 
@@ -61,10 +61,7 @@ class _AuthScreenState extends State<AuthScreen> {
         );
         await cred.user?.updateDisplayName(_nameCtrl.text.trim());
       } else {
-        await auth.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
+        await auth.signInWithEmailAndPassword(email: email, password: password);
       }
 
       if (!mounted) return;
@@ -76,14 +73,13 @@ class _AuthScreenState extends State<AuthScreen> {
           backgroundColor: AppColors.sage,
         ),
       );
-          Navigator.of(context).pushReplacement(
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => _role == UserRole.admin
               ? const AdminHomeScreen()
               : const CustomerHomeScreen(),
         ),
       );
-
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -96,6 +92,7 @@ class _AuthScreenState extends State<AuthScreen> {
       if (mounted) setState(() => _loading = false);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final isAdmin = _role == UserRole.admin;
@@ -128,27 +125,35 @@ class _AuthScreenState extends State<AuthScreen> {
                             color: AppColors.sageLight,
                             borderRadius: BorderRadius.circular(18),
                           ),
-                          child: const Icon(Icons.diamond_outlined,
-                              color: AppColors.sage, size: 28),
+                          child: const Icon(
+                            Icons.diamond_outlined,
+                            color: AppColors.sage,
+                            size: 28,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 14),
-                      const Text('beadaries',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.sage)),
+                      const Text(
+                        'beadaries',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.sage,
+                        ),
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         isAdmin
                             ? 'Owner Studio • Inventory & Approvals'
                             : (_showRegister
-                                ? 'Create your account'
-                                : 'Welcome back'),
+                                  ? 'Create your account'
+                                  : 'Welcome back'),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                            fontSize: 13, color: AppColors.muted),
+                          fontSize: 13,
+                          color: AppColors.muted,
+                        ),
                       ),
                       const SizedBox(height: 20),
                       _RoleSwitch(role: _role, onChanged: _setRole),
@@ -157,8 +162,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         TextFormField(
                           controller: _nameCtrl,
                           textCapitalization: TextCapitalization.words,
-                          decoration:
-                              const InputDecoration(hintText: 'Full name'),
+                          decoration: const InputDecoration(
+                            hintText: 'Full name',
+                          ),
                           validator: (v) => (v == null || v.trim().isEmpty)
                               ? 'Please enter your name'
                               : null,
@@ -169,7 +175,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         controller: _emailCtrl,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                            hintText: isAdmin ? 'Admin email' : 'Email'),
+                          hintText: isAdmin ? 'Admin email' : 'Email',
+                        ),
                         validator: (v) {
                           final s = v?.trim() ?? '';
                           if (s.isEmpty) return 'Please enter your email';
@@ -188,10 +195,11 @@ class _AuthScreenState extends State<AuthScreen> {
                           hintText: 'Password',
                           suffixIcon: IconButton(
                             icon: Icon(
-                                _obscure
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
-                                color: AppColors.muted),
+                              _obscure
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              color: AppColors.muted,
+                            ),
                             onPressed: () =>
                                 setState(() => _obscure = !_obscure),
                           ),
@@ -212,7 +220,8 @@ class _AuthScreenState extends State<AuthScreen> {
                           controller: _confirmCtrl,
                           obscureText: _obscure,
                           decoration: const InputDecoration(
-                              hintText: 'Confirm password'),
+                            hintText: 'Confirm password',
+                          ),
                           validator: (v) => v != _passCtrl.text
                               ? 'Passwords do not match'
                               : null,
@@ -226,23 +235,28 @@ class _AuthScreenState extends State<AuthScreen> {
                           style: FilledButton.styleFrom(
                             backgroundColor: AppColors.sage,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(28)),
+                              borderRadius: BorderRadius.circular(28),
+                            ),
                           ),
                           child: _loading
                               ? const SizedBox(
                                   width: 22,
                                   height: 22,
                                   child: CircularProgressIndicator(
-                                      strokeWidth: 2.5, color: Colors.white))
+                                    strokeWidth: 2.5,
+                                    color: Colors.white,
+                                  ),
+                                )
                               : Text(
                                   isAdmin
                                       ? 'Enter Studio'
                                       : (_showRegister
-                                          ? 'Create Account'
-                                          : 'Sign In'),
+                                            ? 'Create Account'
+                                            : 'Sign In'),
                                   style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                         ),
                       ),
@@ -256,7 +270,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                   ? 'Already have an account? '
                                   : "Don't have an account? ",
                               style: const TextStyle(
-                                  fontSize: 13, color: AppColors.muted),
+                                fontSize: 13,
+                                color: AppColors.muted,
+                              ),
                             ),
                             GestureDetector(
                               onTap: () => setState(() {

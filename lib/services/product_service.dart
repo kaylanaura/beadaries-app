@@ -35,22 +35,30 @@ abstract class ProductRepository {
 
 /// Real implementation using Cloud Firestore and Firebase Storage.
 class FirestoreProductRepository implements ProductRepository {
-  FirestoreProductRepository({FirebaseFirestore? firestore, FirebaseStorage? storage})
-      : _firestore = firestore ?? FirebaseFirestore.instance,
-        _storage = storage ?? FirebaseStorage.instance;
+  FirestoreProductRepository({
+    FirebaseFirestore? firestore,
+    FirebaseStorage? storage,
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _storage = storage ?? FirebaseStorage.instance;
 
   final FirebaseFirestore _firestore;
   final FirebaseStorage _storage;
 
   /// The "products" collection.
-  CollectionReference<Map<String, dynamic>> get _products => _firestore.collection('products');
+  CollectionReference<Map<String, dynamic>> get _products =>
+      _firestore.collection('products');
 
   @override
   Stream<List<Product>> watchProducts() {
     // Order by createdAt only (no composite index needed), then hide archived items here.
-    return _products.orderBy('createdAt', descending: true).snapshots().map(
-          (snapshot) =>
-              snapshot.docs.map(Product.fromFirestore).where((p) => !p.isArchived).toList(),
+    return _products
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map(Product.fromFirestore)
+              .where((p) => !p.isArchived)
+              .toList(),
         );
   }
 
@@ -71,7 +79,10 @@ class FirestoreProductRepository implements ProductRepository {
   @override
   Future<void> updateProduct(Product product) async {
     final urls = await _uploadImages(product.productId, product.imageUrls);
-    final updated = product.copyWith(imageUrls: urls, updatedAt: DateTime.now());
+    final updated = product.copyWith(
+      imageUrls: urls,
+      updatedAt: DateTime.now(),
+    );
     // Do not overwrite createdAt when editing.
     final data = updated.toMap()..remove('createdAt');
     await _products.doc(product.productId).update(data);
@@ -95,7 +106,10 @@ class FirestoreProductRepository implements ProductRepository {
 
   /// Uploads local files to products/{productId}/ and returns all download URLs.
   /// Items that are already http URLs are kept as they are.
-  Future<List<String>> _uploadImages(String productId, List<String> sources) async {
+  Future<List<String>> _uploadImages(
+    String productId,
+    List<String> sources,
+  ) async {
     final urls = <String>[];
     for (var i = 0; i < sources.length; i++) {
       final source = sources[i];
@@ -107,7 +121,10 @@ class FirestoreProductRepository implements ProductRepository {
       final fileName = '${DateTime.now().millisecondsSinceEpoch}_$i.$extension';
       final ref = _storage.ref('products/$productId/$fileName');
       final contentType = extension == 'png' ? 'image/png' : 'image/jpeg';
-      await ref.putFile(File(source), SettableMetadata(contentType: contentType));
+      await ref.putFile(
+        File(source),
+        SettableMetadata(contentType: contentType),
+      );
       urls.add(await ref.getDownloadURL());
     }
     return urls;
@@ -119,8 +136,9 @@ class FirestoreProductRepository implements ProductRepository {
 
 /// In-memory implementation for the partially functional Demo 1 (no Firebase needed).
 class MockProductRepository implements ProductRepository {
-  MockProductRepository({this.simulatedDelay = const Duration(milliseconds: 400)})
-      : _products = _buildSeedProducts();
+  MockProductRepository({
+    this.simulatedDelay = const Duration(milliseconds: 400),
+  }) : _products = _buildSeedProducts();
 
   /// Fake waiting time so the "saving" spinner is visible. Tests use Duration.zero.
   final Duration simulatedDelay;
@@ -141,11 +159,13 @@ class MockProductRepository implements ProductRepository {
     await Future<void>.delayed(simulatedDelay);
     final now = DateTime.now();
     // In mock mode the local file paths are simply kept (no upload).
-    _products.add(product.copyWith(
-      productId: 'mock-${_nextId++}',
-      createdAt: now,
-      updatedAt: now,
-    ));
+    _products.add(
+      product.copyWith(
+        productId: 'mock-${_nextId++}',
+        createdAt: now,
+        updatedAt: now,
+      ),
+    );
     _emit();
   }
 
@@ -205,28 +225,91 @@ class MockProductRepository implements ProductRepository {
 /// 8 sample products: 6 Available, 1 Pending, 1 Reserved. Smaller n = newer.
 List<Product> _buildSeedProducts() {
   return [
-    _seed(1, 'Wisteria Charm Bag Chain', ProductCategory.all[1], 'Glass beads, pearls',
-        'Lavender, Cream', 42.00, ProductStatus.pending),
-    _seed(2, 'Lilac Glass Flower Bracelet', ProductCategory.all[0], 'Glass flower beads',
-        'Lilac, Lavender', 30.00, ProductStatus.reserved),
-    _seed(3, 'Sage Garden Bead Bracelet', ProductCategory.all[0], 'Seed beads, glass beads',
-        'Cream, Sage', 25.00, ProductStatus.available),
-    _seed(4, 'Cream Pearl Phone Charm', ProductCategory.all[1], 'Faux pearls',
-        'Cream, Gold', 18.00, ProductStatus.available),
-    _seed(5, 'Lavender Daisy Keychain', ProductCategory.all[2], 'Acrylic daisy beads',
-        'Lavender, White', 15.00, ProductStatus.available),
-    _seed(6, 'Mint Leaf Beaded Keychain', ProductCategory.all[2], 'Glass beads',
-        'Sage, Mint', 12.00, ProductStatus.available),
-    _seed(7, 'Starry Night Bead Bracelet', ProductCategory.all[0], 'Crystal beads',
-        'Navy, Silver', 28.00, ProductStatus.available),
-    _seed(8, 'Lemon Blossom Phone Strap', ProductCategory.all[1], 'Acrylic beads',
-        'Yellow, Cream', 22.00, ProductStatus.available),
+    _seed(
+      1,
+      'Wisteria Charm Bag Chain',
+      ProductCategory.all[1],
+      'Glass beads, pearls',
+      'Lavender, Cream',
+      42.00,
+      ProductStatus.pending,
+    ),
+    _seed(
+      2,
+      'Lilac Glass Flower Bracelet',
+      ProductCategory.all[0],
+      'Glass flower beads',
+      'Lilac, Lavender',
+      30.00,
+      ProductStatus.reserved,
+    ),
+    _seed(
+      3,
+      'Sage Garden Bead Bracelet',
+      ProductCategory.all[0],
+      'Seed beads, glass beads',
+      'Cream, Sage',
+      25.00,
+      ProductStatus.available,
+    ),
+    _seed(
+      4,
+      'Cream Pearl Phone Charm',
+      ProductCategory.all[1],
+      'Faux pearls',
+      'Cream, Gold',
+      18.00,
+      ProductStatus.available,
+    ),
+    _seed(
+      5,
+      'Lavender Daisy Keychain',
+      ProductCategory.all[2],
+      'Acrylic daisy beads',
+      'Lavender, White',
+      15.00,
+      ProductStatus.available,
+    ),
+    _seed(
+      6,
+      'Mint Leaf Beaded Keychain',
+      ProductCategory.all[2],
+      'Glass beads',
+      'Sage, Mint',
+      12.00,
+      ProductStatus.available,
+    ),
+    _seed(
+      7,
+      'Starry Night Bead Bracelet',
+      ProductCategory.all[0],
+      'Crystal beads',
+      'Navy, Silver',
+      28.00,
+      ProductStatus.available,
+    ),
+    _seed(
+      8,
+      'Lemon Blossom Phone Strap',
+      ProductCategory.all[1],
+      'Acrylic beads',
+      'Yellow, Cream',
+      22.00,
+      ProductStatus.available,
+    ),
   ];
 }
 
 /// Builds one seed product. No images, so the UI shows the placeholder icon.
-Product _seed(int n, String name, String category, String material, String palette,
-    double price, String status) {
+Product _seed(
+  int n,
+  String name,
+  String category,
+  String material,
+  String palette,
+  double price,
+  String status,
+) {
   final created = DateTime.now().subtract(Duration(hours: n));
   return Product(
     productId: 'seed-$n',

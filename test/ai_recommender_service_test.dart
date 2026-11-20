@@ -9,7 +9,8 @@ import 'package:beadaries_prototype/models/ai_recommendation.dart';
 import 'package:beadaries_prototype/services/ai_recommender_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-AiPreferences _prefs({String type = 'Any', double budget = 60}) => AiPreferences(
+AiPreferences _prefs({String type = 'Any', double budget = 60}) =>
+    AiPreferences(
       stylingFor: 'Myself',
       selectedColours: const {'Cream & Sage'},
       accessoryType: type,
@@ -38,7 +39,10 @@ void main() {
 
   test('BR-05: only Available products are matched', () async {
     final result = await service.recommend(_prefs());
-    expect(result.matchedProducts.every((p) => p.status == 'Available'), isTrue);
+    expect(
+      result.matchedProducts.every((p) => p.status == 'Available'),
+      isTrue,
+    );
   });
 
   test('BR-05: products above the budget are left out', () async {
@@ -48,7 +52,10 @@ void main() {
 
   test('accessory type filters the matched products', () async {
     final result = await service.recommend(_prefs(type: 'Bracelets'));
-    expect(result.matchedProducts.every((p) => p.category == 'Bracelets'), isTrue);
+    expect(
+      result.matchedProducts.every((p) => p.category == 'Bracelets'),
+      isTrue,
+    );
   });
 
   test('estimated price never goes above the budget', () async {
@@ -57,7 +64,10 @@ void main() {
   });
 
   test('FR-AI-03: outage throws so the screen can use the fallback', () async {
-    final broken = MockAiRecommenderService(delay: Duration.zero, simulateOutage: true);
+    final broken = MockAiRecommenderService(
+      delay: Duration.zero,
+      simulateOutage: true,
+    );
     expect(broken.recommend(_prefs()), throwsA(isA<TimeoutException>()));
   });
 
@@ -65,6 +75,9 @@ void main() {
     final result = service.fallback(_prefs());
     expect(result.isFallback, isTrue);
     expect(result.matchedProducts.length, lessThanOrEqualTo(4));
-    expect(result.matchedProducts.every((p) => p.status == 'Available'), isTrue);
+    expect(
+      result.matchedProducts.every((p) => p.status == 'Available'),
+      isTrue,
+    );
   });
 }

@@ -5,7 +5,7 @@
 
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../models/product.dart';
 import '../../theme/inventory_colors.dart';
@@ -25,7 +25,10 @@ class ProductImage extends StatelessWidget {
       width: size,
       height: size,
       color: InventoryColors.lavenderTint,
-      child: const Icon(Icons.image_outlined, color: InventoryColors.lavenderText),
+      child: const Icon(
+        Icons.image_outlined,
+        color: InventoryColors.lavenderText,
+      ),
     );
   }
 
@@ -37,18 +40,22 @@ class ProductImage extends StatelessWidget {
       image = _placeholder();
     } else if (path.startsWith('http')) {
       // Uploaded image (Firebase Storage URL)
-      image = Image.network(path,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-          errorBuilder: (_, _, _) => _placeholder());
+      image = Image.network(
+        path,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => _placeholder(),
+      );
     } else {
       // Local file (picked image in mock mode, or not uploaded yet)
-      image = Image.file(File(path),
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-          errorBuilder: (_, _, _) => _placeholder());
+      image = Image.file(
+        File(path),
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => _placeholder(),
+      );
     }
     return ClipRRect(borderRadius: BorderRadius.circular(12), child: image);
   }
@@ -98,21 +105,35 @@ class ProductListTile extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ProductImage(source: product.imageUrls.isEmpty ? null : product.imageUrls.first),
+        ProductImage(
+          source: product.imageUrls.isEmpty ? null : product.imageUrls.first,
+        ),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(product.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
-              Text(product.category,
-                  style: textTheme.bodySmall?.copyWith(color: InventoryColors.textMuted)),
+              Text(
+                product.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                product.category,
+                style: textTheme.bodySmall?.copyWith(
+                  color: InventoryColors.textMuted,
+                ),
+              ),
               const SizedBox(height: 2),
-              Text(product.priceLabel,
-                  style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+              Text(
+                product.priceLabel,
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               const SizedBox(height: 6),
               StatusPill(status: product.status),
             ],
@@ -143,8 +164,12 @@ class ProductListTile extends StatelessWidget {
         const SizedBox(width: 6),
         Expanded(
           child: Text(
-            locked ? 'Managed by reservations' : (isAvailable ? 'In stock' : 'Sold out'),
-            style: textTheme.bodySmall?.copyWith(color: InventoryColors.textMuted),
+            locked
+                ? 'Managed by reservations'
+                : (isAvailable ? 'In stock' : 'Sold out'),
+            style: textTheme.bodySmall?.copyWith(
+              color: InventoryColors.textMuted,
+            ),
           ),
         ),
         IconButton(

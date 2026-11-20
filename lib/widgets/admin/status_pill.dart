@@ -3,7 +3,7 @@
 // Requirement: FR-06 Admin Product Management / Inventory (FR-09) (UI-06) | GitHub Issue #6
 // Description: Small rounded pill with a leading dot that shows a product status.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../models/product.dart';
 import '../../theme/inventory_colors.dart';
@@ -46,7 +46,10 @@ class StatusPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: ShapeDecoration(color: _background, shape: const StadiumBorder()),
+      decoration: ShapeDecoration(
+        color: _background,
+        shape: const StadiumBorder(),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -54,15 +57,16 @@ class StatusPill extends StatelessWidget {
           Container(
             width: 8,
             height: 8,
-            decoration: BoxDecoration(color: _foreground, shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: _foreground,
+              shape: BoxShape.circle,
+            ),
           ),
           const SizedBox(width: 6),
           Text(
             status,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: _foreground,
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(context).textTheme.labelMedium
+                ?.copyWith(color: _foreground, fontWeight: FontWeight.w600),
           ),
         ],
       ),

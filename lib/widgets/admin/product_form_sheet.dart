@@ -3,7 +3,7 @@
 // Requirement: FR-06 Admin Product Management / Inventory (FR-09) (UI-06) | GitHub Issue #6
 // Description: Add / Edit Product modal bottom sheet with validation and image picking (1 to 3 images).
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -62,7 +62,8 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
 
   /// BR-01: the status of a Pending / Reserved product cannot be changed here.
   bool get _statusLocked =>
-      _isEditing && ProductStatus.isManagedByReservation(widget.product!.status);
+      _isEditing &&
+      ProductStatus.isManagedByReservation(widget.product!.status);
 
   @override
   void initState() {
@@ -71,12 +72,15 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
     _nameController = TextEditingController(text: p?.name ?? '');
     _materialController = TextEditingController(text: p?.beadMaterial ?? '');
     _paletteController = TextEditingController(text: p?.colorPalette ?? '');
-    _priceController =
-        TextEditingController(text: p == null ? '' : p.priceMYR.toStringAsFixed(2));
+    _priceController = TextEditingController(
+      text: p == null ? '' : p.priceMYR.toStringAsFixed(2),
+    );
     _descriptionController = TextEditingController(text: p?.description ?? '');
     // Old data with an unknown category falls back to "Other".
     if (p != null) {
-      _category = ProductCategory.all.contains(p.category) ? p.category : ProductCategory.other;
+      _category = ProductCategory.all.contains(p.category)
+          ? p.category
+          : ProductCategory.other;
     }
     _status = p?.status ?? ProductStatus.available;
     _images = List<String>.from(p?.imageUrls ?? const []);
@@ -114,7 +118,9 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
       });
     } catch (_) {
       if (mounted) {
-        setState(() => _imageError = 'Could not open the gallery. Please try again.');
+        setState(
+          () => _imageError = 'Could not open the gallery. Please try again.',
+        );
       }
     }
   }
@@ -139,7 +145,8 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
   /// Builds the Product from the form values (call only after validation).
   Product _buildProduct() {
     final now = DateTime.now();
-    final base = widget.product ??
+    final base =
+        widget.product ??
         Product(
           productId: '', // Firestore / mock repo creates the real id
           name: '',
@@ -177,7 +184,10 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
     final hostMessenger = ScaffoldMessenger.of(context); // outside the sheet
     final navigator = Navigator.of(context);
 
-    final success = await provider.saveProduct(_buildProduct(), isNew: !_isEditing);
+    final success = await provider.saveProduct(
+      _buildProduct(),
+      isNew: !_isEditing,
+    );
 
     if (success) {
       hostMessenger.showSnackBar(
@@ -189,7 +199,9 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
     } else {
       // Keep the sheet open so the owner can try again.
       _messengerKey.currentState?.showSnackBar(
-        const SnackBar(content: Text('Failed to save product. Please try again.')),
+        const SnackBar(
+          content: Text('Failed to save product. Please try again.'),
+        ),
       );
     }
   }
@@ -212,9 +224,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
               children: [
                 Text(
                   _isEditing ? 'Edit Product' : 'Add Product',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
+                  style: Theme.of(context).textTheme.titleLarge
                       ?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 16),
@@ -265,7 +275,10 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
         controller: _priceController,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
-        decoration: const InputDecoration(labelText: 'Price (RM)', prefixText: 'RM '),
+        decoration: const InputDecoration(
+          labelText: 'Price (RM)',
+          prefixText: 'RM ',
+        ),
         validator: ProductValidators.price,
       ),
       TextFormField(
@@ -284,7 +297,9 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
         items: (_statusLocked ? [_status] : ProductStatus.editable)
             .map((s) => DropdownMenuItem(value: s, child: Text(s)))
             .toList(),
-        onChanged: _statusLocked ? null : (value) => setState(() => _status = value ?? _status),
+        onChanged: _statusLocked
+            ? null
+            : (value) => setState(() => _status = value ?? _status),
         validator: ProductValidators.status,
       ),
     ];
@@ -300,8 +315,12 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Photos (1 to $_maxImages, JPG/PNG, under 5 MB)',
-            style: textTheme.bodyMedium?.copyWith(color: InventoryColors.textMuted)),
+        Text(
+          'Photos (1 to $_maxImages, JPG/PNG, under 5 MB)',
+          style: textTheme.bodyMedium?.copyWith(
+            color: InventoryColors.textMuted,
+          ),
+        ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 10,
@@ -319,7 +338,10 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                       tooltip: 'Remove image',
                       iconSize: 16,
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints.tightFor(width: 28, height: 28),
+                      constraints: const BoxConstraints.tightFor(
+                        width: 28,
+                        height: 28,
+                      ),
                       style: IconButton.styleFrom(
                         backgroundColor: InventoryColors.errorRed,
                         foregroundColor: InventoryColors.cardWhite,
@@ -341,8 +363,12 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
         if (_imageError != null)
           Padding(
             padding: const EdgeInsets.only(top: 6),
-            child: Text(_imageError!,
-                style: textTheme.bodySmall?.copyWith(color: InventoryColors.errorRed)),
+            child: Text(
+              _imageError!,
+              style: textTheme.bodySmall?.copyWith(
+                color: InventoryColors.errorRed,
+              ),
+            ),
           ),
       ],
     );

@@ -10,15 +10,18 @@ import 'package:flutter/foundation.dart';
 import '../models/product.dart';
 import '../services/product_service.dart';
 
-// TODO: switch useMockData to false when Firebase is connected (Kayla's setup)
+// Demo 1 uses the injectable mock repository; production injection is supported.
 const bool useMockData = true;
 
 /// State for the Admin Inventory tab. The shell can also read the counts for its KPI strip.
 class AdminProductProvider extends ChangeNotifier {
   /// Pass a repository for testing; otherwise the useMockData flag decides.
   AdminProductProvider({ProductRepository? repository})
-      : _repository = repository ??
-            (useMockData ? MockProductRepository() : FirestoreProductRepository()) {
+    : _repository =
+          repository ??
+          (useMockData
+              ? MockProductRepository()
+              : FirestoreProductRepository()) {
     _listenToProducts();
   }
 
@@ -40,7 +43,9 @@ class AdminProductProvider extends ChangeNotifier {
     if (query.isEmpty) {
       return _products;
     }
-    return _products.where((p) => p.name.toLowerCase().contains(query)).toList();
+    return _products
+        .where((p) => p.name.toLowerCase().contains(query))
+        .toList();
   }
 
   bool get isLoading => _isLoading;
