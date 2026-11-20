@@ -11,7 +11,10 @@ import '../models/product.dart';
 import '../services/product_service.dart';
 
 // Demo 1 uses the injectable mock repository; production injection is supported.
-const bool useMockData = true;
+const bool useMockData = bool.fromEnvironment(
+  'USE_MOCK_DATA',
+  defaultValue: false,
+);
 
 /// State for the Admin Inventory tab. The shell can also read the counts for its KPI strip.
 class AdminProductProvider extends ChangeNotifier {

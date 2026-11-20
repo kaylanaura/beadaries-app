@@ -1,7 +1,10 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
+import '../../providers/admin_product_provider.dart';
 import '../customer/customer_home_screen.dart';
 import '../admin/admin_home_screen.dart';
 
@@ -53,15 +56,48 @@ class _AuthScreenState extends State<AuthScreen> {
       final auth = FirebaseAuth.instance;
       final email = _emailCtrl.text.trim();
       final password = _passCtrl.text;
+      final credential = _showRegister
+          ? await auth.createUserWithEmailAndPassword(
+              email: email,
+              password: password,
+            )
+          : await auth.signInWithEmailAndPassword(
+              email: email,
+              password: password,
+            );
+      final user = credential.user;
+      if (user == null) {
+        throw StateError('Authentication did not return a user account.');
+      }
 
       if (_showRegister) {
-        final cred = await auth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        await cred.user?.updateDisplayName(_nameCtrl.text.trim());
+        final displayName = _nameCtrl.text.trim();
+        await user.updateDisplayName(displayName);
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'email': email,
+          'displayName': displayName,
+          'role': UserRole.customer.name,
+        });
       } else {
-        await auth.signInWithEmailAndPassword(email: email, password: password);
+        final profile = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (!profile.exists && _role == UserRole.customer) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+                'email': email,
+                'displayName': user.displayName ?? '',
+                'role': UserRole.customer.name,
+              });
+        } else if (profile.data()?['role'] != _role.name) {
+          await auth.signOut();
+          throw StateError(
+            'This account is not authorized for the selected role.',
+          );
+        }
       }
 
       if (!mounted) return;
@@ -75,9 +111,12 @@ class _AuthScreenState extends State<AuthScreen> {
       );
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => _role == UserRole.admin
-              ? const AdminHomeScreen()
-              : const CustomerHomeScreen(),
+          builder: (_) => ChangeNotifierProvider(
+            create: (_) => AdminProductProvider(),
+            child: _role == UserRole.admin
+                ? const AdminHomeScreen()
+                : const CustomerHomeScreen(),
+          ),
         ),
       );
     } on FirebaseAuthException catch (e) {
@@ -85,6 +124,23 @@ class _AuthScreenState extends State<AuthScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message ?? 'Authentication failed'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    } on FirebaseException catch (e) {
+      await FirebaseAuth.instance.signOut();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message ?? 'Could not load your account profile.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    } on StateError catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message.toString()),
           backgroundColor: AppColors.error,
         ),
       );

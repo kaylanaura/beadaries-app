@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../theme/app_theme.dart';
 import '../auth/auth_screen.dart';
 import 'ai_recommender_screen.dart';
+import 'catalogue_screen.dart';
 import '../customer_reservation_screen.dart';
 import '../../models/ai_recommendation.dart';
 import '../../services/reservation_store.dart';
@@ -25,7 +26,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
     setState(() {
       _preselectedProduct = matches.isEmpty ? null : matches.first;
       _designNotes = result.designSummary;
-      _selectedIndex = 1;
+      _selectedIndex = 2;
     });
   }
 
@@ -57,6 +58,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
         index: _selectedIndex,
         children: [
           AiRecommenderScreen(onUseInReservation: _useDesign),
+          const CatalogueScreen(),
           CustomerReservationScreen(
             key: ValueKey(
               '${_preselectedProduct?.id ?? 'none'}-${_designNotes ?? ''}',
@@ -75,6 +77,11 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
             icon: Icon(Icons.auto_awesome_outlined),
             selectedIcon: Icon(Icons.auto_awesome),
             label: 'AI Stylist',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.storefront_outlined),
+            selectedIcon: Icon(Icons.storefront),
+            label: 'Catalogue',
           ),
           NavigationDestination(
             icon: Icon(Icons.shopping_bag_outlined),

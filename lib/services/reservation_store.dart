@@ -8,12 +8,14 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
+import '../models/product.dart';
+
 class BeadProduct {
-  final String id;
-  final String name;
-  final String category;
-  final String beadMaterial;
-  final double priceMYR;
+  String id;
+  String name;
+  String category;
+  String beadMaterial;
+  double priceMYR;
   String status; // 'Available', 'Pending', 'Reserved', 'Sold Out'
 
   BeadProduct({
@@ -102,6 +104,36 @@ class ReservationStore extends ChangeNotifier {
       createdAt: DateTime.now().subtract(const Duration(hours: 2)),
     ),
   ];
+
+  BeadProduct registerInventoryProduct(Product product) {
+    final existingIndex = products.indexWhere(
+      (item) => item.id == product.productId,
+    );
+    if (existingIndex >= 0) {
+      final existing = products[existingIndex];
+      existing
+        ..name = product.name
+        ..category = product.category
+        ..beadMaterial = product.beadMaterial
+        ..priceMYR = product.priceMYR;
+      if (existing.status != 'Pending' && existing.status != 'Reserved') {
+        existing.status = product.status;
+      }
+      return existing;
+    }
+
+    final inventoryProduct = BeadProduct(
+      id: product.productId,
+      name: product.name,
+      category: product.category,
+      beadMaterial: product.beadMaterial,
+      priceMYR: product.priceMYR,
+      status: product.status,
+    );
+    products.add(inventoryProduct);
+    notifyListeners();
+    return inventoryProduct;
+  }
 
   /// FR-04 & FR-05: Submit reservation with Atomic Single-Stock Lock (BR-01)
   Future<ReservationModel> submitReservation({

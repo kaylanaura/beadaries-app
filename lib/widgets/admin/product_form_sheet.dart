@@ -3,6 +3,8 @@
 // Requirement: FR-06 Admin Product Management / Inventory (FR-09) (UI-06) | GitHub Issue #6
 // Description: Add / Edit Product modal bottom sheet with validation and image picking (1 to 3 images).
 
+import 'dart:convert';
+
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -55,7 +57,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
 
   String? _category;
   late String _status;
-  late List<String> _images; // http URLs and/or local file paths
+  late List<String> _images; // Download URLs or temporary image data URIs.
   String? _imageError;
 
   bool get _isEditing => widget.product != null;
@@ -105,12 +107,15 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
       }
       final size = await picked.length();
       final error = ProductValidators.imageFile(picked.name, size);
+      final bytes = error == null ? await picked.readAsBytes() : null;
       if (!mounted) {
         return;
       }
       setState(() {
         if (error == null) {
-          _images.add(picked.path);
+          final isPng = picked.name.toLowerCase().endsWith('.png');
+          final mimeType = isPng ? 'image/png' : 'image/jpeg';
+          _images.add('data:$mimeType;base64,${base64Encode(bytes!)}');
           _imageError = null;
         } else {
           _imageError = error; // "Please upload a JPG/PNG image under 5 MB"

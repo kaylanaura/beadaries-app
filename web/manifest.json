@@ -1,11 +1,11 @@
 {
-    "name": "beadaries_prototype",
-    "short_name": "beadaries_prototype",
+    "name": "Beadaries - Handmade Accessories",
+    "short_name": "Beadaries",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FAF6EE",
+    "theme_color": "#3F5B42",
+    "description": "Browse handmade bead accessories and request reservations.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

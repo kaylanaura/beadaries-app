@@ -3,19 +3,18 @@
 // Requirement: FR-06 Admin Product Management / Inventory (FR-09) (UI-06) | GitHub Issue #6
 // Description: Product card for the admin list (image, details, status pill, stock switch, edit, archive).
 
-import 'dart:io';
-
 import 'package:material_ui/material_ui.dart';
 
 import '../../models/product.dart';
 import '../../theme/inventory_colors.dart';
+import '../product_image_view.dart';
 import 'status_pill.dart';
 
-/// Shows a product image from a network URL or a local file path (with a placeholder on error).
+/// Shows a product image from a URL, data URI, or local file path.
 class ProductImage extends StatelessWidget {
   const ProductImage({super.key, this.source, this.size = 72});
 
-  /// http URL, local file path, or null / empty for no image.
+  /// URL, data URI, local file path, or null / empty for no image.
   final String? source;
   final double size;
 
@@ -34,30 +33,15 @@ class ProductImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final path = source;
-    Widget image;
-    if (path == null || path.isEmpty) {
-      image = _placeholder();
-    } else if (path.startsWith('http')) {
-      // Uploaded image (Firebase Storage URL)
-      image = Image.network(
-        path,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: ProductImageView(
+        source: source,
         width: size,
         height: size,
-        fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => _placeholder(),
-      );
-    } else {
-      // Local file (picked image in mock mode, or not uploaded yet)
-      image = Image.file(
-        File(path),
-        width: size,
-        height: size,
-        fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => _placeholder(),
-      );
-    }
-    return ClipRRect(borderRadius: BorderRadius.circular(12), child: image);
+        placeholder: _placeholder(),
+      ),
+    );
   }
 }
 

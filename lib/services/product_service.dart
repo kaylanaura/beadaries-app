@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/product.dart';
 
@@ -116,6 +117,29 @@ class FirestoreProductRepository implements ProductRepository {
       if (source.startsWith('http')) {
         urls.add(source);
         continue;
+      }
+
+      final data = Uri.tryParse(source)?.data;
+      if (data != null) {
+        if (!data.mimeType.startsWith('image/')) {
+          throw FormatException('Unsupported image type: ${data.mimeType}');
+        }
+        final extension = data.mimeType == 'image/png' ? 'png' : 'jpg';
+        final fileName =
+            '${DateTime.now().millisecondsSinceEpoch}_$i.$extension';
+        final ref = _storage.ref('products/$productId/$fileName');
+        await ref.putData(
+          data.contentAsBytes(),
+          SettableMetadata(contentType: data.mimeType),
+        );
+        urls.add(await ref.getDownloadURL());
+        continue;
+      }
+
+      if (kIsWeb) {
+        throw UnsupportedError(
+          'Local image paths cannot be uploaded on web. Pick the image again.',
+        );
       }
       final extension = source.split('.').last.toLowerCase();
       final fileName = '${DateTime.now().millisecondsSinceEpoch}_$i.$extension';
